@@ -99,8 +99,14 @@ var AuthController = /** @class */ (function () {
                         isUser = _b.sent();
                         if (!User_1.default)
                             return [2 /*return*/, res.status(201).json((0, Packet_1.Packet)("No User with this Email ID"))];
-                        token = jsonwebtoken_1.default.sign({ email: email, password: password, _id: isUser._id }, process.env.SECURE_KEY);
-                        res.status(201).json((0, Packet_1.Packet)("User LoggedIn", { user: isUser, token: token }));
+                        try {
+                            token = jsonwebtoken_1.default.sign({ email: email, password: password, _id: isUser._id }, process.env.SECURE_KEY);
+                            res.status(201).json((0, Packet_1.Packet)("User LoggedIn", { user: isUser, token: token }));
+                        }
+                        catch (error) {
+                            console.log({ error: error });
+                            res.status(501).json((0, Packet_1.Packet)("Message"));
+                        }
                         return [2 /*return*/];
                 }
             });

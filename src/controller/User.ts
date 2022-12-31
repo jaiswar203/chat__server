@@ -40,9 +40,15 @@ class AuthController {
 
     if(!User) return res.status(201).json(packet("No User with this Email ID"))
 
-    const token=jwt.sign({email,password,_id:isUser._id},process.env.SECURE_KEY)
-
-    res.status(201).json(packet("User LoggedIn",{user:isUser,token}))
+    try {
+      
+      const token=jwt.sign({email,password,_id:isUser._id},process.env.SECURE_KEY)
+  
+      res.status(201).json(packet("User LoggedIn",{user:isUser,token}))
+    } catch (error) {
+      console.log({error})
+      res.status(501).json(packet("Message"))
+    }
 
   }
 
