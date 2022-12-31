@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { Application } from "express";
+import express, { Application ,Request,Response} from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import morgan from "morgan";
@@ -10,6 +10,7 @@ import "./controller/Chat";
 import "./controller/Conversation";
 import http, { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
+import { Packet } from "./library/Packet";
 
 declare var process: {
   env: {
@@ -54,6 +55,9 @@ export class Server {
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use(morgan("dev"));
     this.app.use(Router.getInstance());
+    this.app.get("/",(req:Request,res:Response)=>{
+      res.status(201).json(Packet("Welcome to the server"))
+    })
   }
 
   database(): void {

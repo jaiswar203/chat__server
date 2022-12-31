@@ -27,6 +27,7 @@ require("./controller/Chat");
 require("./controller/Conversation");
 var http_1 = require("http");
 var socket_io_1 = require("socket.io");
+var Packet_1 = require("./library/Packet");
 var Server = /** @class */ (function () {
     function Server() {
         this.users = [];
@@ -49,6 +50,9 @@ var Server = /** @class */ (function () {
         this.app.use(body_parser_1.default.urlencoded({ extended: true }));
         this.app.use((0, morgan_1.default)("dev"));
         this.app.use(Router_1.Router.getInstance());
+        this.app.get("/", function (req, res) {
+            res.status(201).json((0, Packet_1.Packet)("Welcome to the server"));
+        });
     };
     Server.prototype.database = function () {
         var _this = this;
