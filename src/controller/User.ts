@@ -14,6 +14,7 @@ import {
   del,
 } from "../decorator";
 import UserAuth from "../middleware/user";
+import mongoose from "mongoose";
 
 dotenv.config()
 
@@ -38,7 +39,7 @@ class AuthController {
 
     const isUser=await User.findOne({email}).populate("contacts")
 
-    if(!User) return res.status(201).json(packet("No User with this Email ID"))
+    if(!isUser) return res.status(201).json(packet("No User with this Email ID"))
 
     try {
       
@@ -99,11 +100,30 @@ class AuthController {
 
     const isUserExist = await User.findById(id);
 
-    if (!isUserExist) {
-      return res.status(401).json({ message: "User Exist with this email" });
-    }
-
+    if (!isUserExist) return res.status(401).json({ message: "User Exist with this email" });
+    
     await isUserExist.delete();
     res.status(201).json(packet("Deleted"));
+  }
+  
+  @get("/getcontacts/:id")
+  async getContacts(req:Request,res:Response){
+    const {id}=req.params
+
+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json(packet("Invalid ID"))
+
+    const isUserExist = await User.findById(id).populate("contacts");
+  
+    if (!isUserExist) return res.status(401).json({ message: "User Exist with this email" });
+
+    try {
+      const contacts=isUserExist.contacts
+  
+      res.status(201).json(packet("Contacts Fetced",contacts))
+      
+    } catch (error) {
+      res.status(501).json(packet("Error Occured"))
+    }
+    
   }
 }

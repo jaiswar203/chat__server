@@ -66,7 +66,7 @@ var UserSchema = new mongoose_1.Schema({
     contacts: [
         {
             type: "ObjectId",
-            // ref:"users"
+            ref: "User"
         }
     ],
     conversations: [

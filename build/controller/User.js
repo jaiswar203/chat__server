@@ -65,6 +65,7 @@ var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var dotenv_1 = __importDefault(require("dotenv"));
 var decorator_1 = require("../decorator");
 var user_1 = __importDefault(require("../middleware/user"));
+var mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
 var AuthController = /** @class */ (function () {
     function AuthController() {
@@ -97,7 +98,7 @@ var AuthController = /** @class */ (function () {
                         return [4 /*yield*/, User_1.default.findOne({ email: email }).populate("contacts")];
                     case 1:
                         isUser = _b.sent();
-                        if (!User_1.default)
+                        if (!isUser)
                             return [2 /*return*/, res.status(201).json((0, Packet_1.Packet)("No User with this Email ID"))];
                         try {
                             token = jsonwebtoken_1.default.sign({ email: email, password: password, _id: isUser._id }, process.env.SECURE_KEY);
@@ -170,13 +171,38 @@ var AuthController = /** @class */ (function () {
                         return [4 /*yield*/, User_1.default.findById(id)];
                     case 1:
                         isUserExist = _a.sent();
-                        if (!isUserExist) {
+                        if (!isUserExist)
                             return [2 /*return*/, res.status(401).json({ message: "User Exist with this email" })];
-                        }
                         return [4 /*yield*/, isUserExist.delete()];
                     case 2:
                         _a.sent();
                         res.status(201).json((0, Packet_1.Packet)("Deleted"));
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthController.prototype.getContacts = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id, isUserExist, contacts;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = req.params.id;
+                        if (!mongoose_1.default.Types.ObjectId.isValid(id))
+                            return [2 /*return*/, res.status(404).json((0, Packet_1.Packet)("Invalid ID"))];
+                        return [4 /*yield*/, User_1.default.findById(id).populate("contacts")];
+                    case 1:
+                        isUserExist = _a.sent();
+                        if (!isUserExist)
+                            return [2 /*return*/, res.status(401).json({ message: "User Exist with this email" })];
+                        try {
+                            contacts = isUserExist.contacts;
+                            res.status(201).json((0, Packet_1.Packet)("Contacts Fetced", contacts));
+                        }
+                        catch (error) {
+                            res.status(501).json((0, Packet_1.Packet)("Error Occured"));
+                        }
                         return [2 /*return*/];
                 }
             });
@@ -215,6 +241,12 @@ var AuthController = /** @class */ (function () {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
     ], AuthController.prototype, "delete", null);
+    __decorate([
+        (0, decorator_1.get)("/getcontacts/:id"),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", Promise)
+    ], AuthController.prototype, "getContacts", null);
     AuthController = __decorate([
         (0, decorator_1.controller)("/user")
     ], AuthController);

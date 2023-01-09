@@ -41,7 +41,7 @@ const UserSchema: Schema = new Schema<IUser>(
     contacts:[
       {
         type:"ObjectId",
-        // ref:"users"
+        ref:"User"
       }
     ],
     conversations: [

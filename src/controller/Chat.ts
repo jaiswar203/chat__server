@@ -30,7 +30,8 @@ class ChatController {
 
     const isUserExist = await User.find({ $or: [{ _id: from }, { _id: to }] });
 
-    if (isUserExist.length !== 2) return res.status(404).json(Packet("User is Missing"));
+    if (isUserExist.length !== 2)
+      return res.status(404).json(Packet("User is Missing"));
 
     const conversation = await Conversation.findOne({
       $or: [
@@ -49,30 +50,40 @@ class ChatController {
         { $or: [{ _id: from }, { _id: to }] },
         { $push: { conversations: conversation._id } }
       );
-      await User.findOneAndUpdate({_id:from},{$push:{contacts: to}},{new:true})
-      await User.findOneAndUpdate({_id:to},{$push:{contacts: from}},{new:true})
+      await User.findOneAndUpdate(
+        { _id: from },
+        { $push: { contacts: to } },
+        { new: true }
+      );
+      await User.findOneAndUpdate(
+        { _id: to },
+        { $push: { contacts: from } },
+        { new: true }
+      );
+      
       conversation?.conversation.push(chat._id);
       await conversation.save();
-      res.status(201).json(Packet("Chat Added", { chat }));
-    } else {
-      conversation?.conversation.push(chat._id);
-      await conversation.save();
-      res.status(201).json(Packet("Chat Added", { chat }));
+      return res.status(201).json(Packet("Chat Added", { chat }));
     }
+
+    conversation?.conversation.push(chat._id);
+    await conversation.save();
+    res.status(201).json(Packet("Chat Added", { chat }));
   }
 
   @del("/:id")
-  async deleteChat(req:Request,res:Response){
-    const {id}=req.params
+  async deleteChat(req: Request, res: Response) {
+    const { id } = req.params;
 
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(201).json(Packet("Invalid Id"))
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(201).json(Packet("Invalid Id"));
 
     try {
-      await Chat.findByIdAndRemove(id)
+      await Chat.findByIdAndRemove(id);
 
-      res.status(201).json(Packet("Chat Deleted"))
+      res.status(201).json(Packet("Chat Deleted"));
     } catch (error) {
-      res.status(501).json(Packet("Error Occured"))
+      res.status(501).json(Packet("Error Occured"));
     }
   }
 }

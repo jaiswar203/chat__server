@@ -118,16 +118,14 @@ var ChatController = /** @class */ (function () {
                         return [4 /*yield*/, conversation_1.save()];
                     case 7:
                         _b.sent();
-                        res.status(201).json((0, Packet_1.Packet)("Chat Added", { chat: chat }));
-                        return [3 /*break*/, 10];
+                        return [2 /*return*/, res.status(201).json((0, Packet_1.Packet)("Chat Added", { chat: chat }))];
                     case 8:
                         conversation === null || conversation === void 0 ? void 0 : conversation.conversation.push(chat._id);
                         return [4 /*yield*/, conversation.save()];
                     case 9:
                         _b.sent();
                         res.status(201).json((0, Packet_1.Packet)("Chat Added", { chat: chat }));
-                        _b.label = 10;
-                    case 10: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
