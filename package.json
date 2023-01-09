@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:build": "tsc -w",
-    "start:run": "nodemon build/index.js",
+    "start:run": "node build/index.js",
     "start": "concurrently  npm:start:*",
     "deploy": "forever build/index.js"
   },
